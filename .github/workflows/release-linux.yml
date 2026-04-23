@@ -1,5 +1,11 @@
 # Release-Artefakte: .deb (amd64) + AppImage (x86_64) via PyInstaller onedir.
-# Auslösung: Git-Tag v* oder manuell workflow_dispatch.
+#
+# Triggers:
+# - push eines Tags v*  (lokal: git push origin v0.5.0)
+# - veroeffentlichter GitHub-Release  (UI: "Publish release" / Tag; loest oft zuverlaessiger aus)
+# - workflow_dispatch   (manuell unter Actions)
+#
+# Hinweis: "inputs" darf laut GHA nur im workflow_dispatch-Block sicher referenziert werden.
 
 name: Release (Linux)
 
@@ -7,26 +13,32 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Versionsnummer ohne v (leer = aus pyproject.toml); bei Tag-Build ignoriert"
+        description: "Versionsnummer ohne v (leer = pyproject / Tag)"
         required: false
         default: ""
   push:
     tags:
       - "v*"
+  release:
+    types: [published]
 
 permissions:
   contents: write
 
 concurrency:
-  group: release-linux-${{ github.ref }}
-  cancel-in-progress: true
+  group: release-linux-${{ github.event.release.tag_name || github.ref_name || github.run_id }}
+  cancel-in-progress: false
 
 jobs:
   build-linux:
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout
+      - name: Checkout (Tag / Release-Tag / Branch)
         uses: actions/checkout@v4
+        with:
+          # Bei release: published den Tag auschecken, sonst den ausgeloesten Ref (z. B. push Tag)
+          ref: ${{ github.event_name == 'release' && format('refs/tags/{0}', github.event.release.tag_name) || '' }}
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -34,10 +46,11 @@ jobs:
           python-version: "3.12"
           cache: pip
 
+      - name: Set OPENSTAIR_VERSION (nur manueller Lauf)
+        if: github.event_name == 'workflow_dispatch' && inputs.version != ''
+        run: echo "OPENSTAIR_VERSION=${{ inputs.version }}" >> "$GITHUB_ENV"
+
       - name: Build .deb and AppImage
-        env:
-          # Nur bei workflow_dispatch: manuell; bei Tag-Build leer -> Skript nutzt GITHUB_REF_NAME
-          OPENSTAIR_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.version || '' }}
         run: |
           chmod +x packaging/scripts/build-linux-release.sh
           packaging/scripts/build-linux-release.sh
@@ -45,16 +58,19 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: openstair-linux-${{ github.ref_name || github.run_id }}
+          name: openstair-linux-${{ github.event.release.tag_name || github.ref_name }}-${{ github.run_id }}
           path: |
             packaging/_artifacts/*.deb
             packaging/_artifacts/*.AppImage
           if-no-files-found: error
 
-      - name: Create GitHub Release (nur bei Tag v*)
-        if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
+      - name: An Release anhaengen (Tag-Push oder Release-Event)
+        if: |
+          (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')) ||
+          (github.event_name == 'release' && github.event.action == 'published')
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ github.event_name == 'release' && github.event.release.tag_name || '' }}
           files: |
             packaging/_artifacts/*.deb
             packaging/_artifacts/*.AppImage

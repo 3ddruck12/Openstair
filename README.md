@@ -50,7 +50,15 @@ pytest
 
 ### Release-Build (Linux: .deb + AppImage)
 
-Auf **GitHub Actions** (Workflow `Release (Linux)`): bei **Tag** `v*` werden `openstair_*_amd64.deb` und `OpenStair-*-x86_64.AppImage` gebaut und an die Release-Assets angehaengt. Manuell: **Actions → Release (Linux) → Run workflow** (optional Versionsfeld).
+Auf **GitHub Actions** (Workflow **Release (Linux)**) startet bei:
+
+- **Push eines Git-Tags** `v*` (`git push origin v0.5.0`), oder
+- **Veroeffentlichtem Release** ([Release-Seite](https://github.com/3ddruck12/Openstair/releases) – „Publish release“ loest `release: published` aus), oder
+- manuell: **Actions → Release (Linux) → Run workflow**
+
+Artefakte: `openstair_*_amd64.deb` und `OpenStair-*-x86_64.AppImage` erscheinen in der **Job-Übersicht** (Artifacts) und werden bei Tag-/Release-Trigger an [das Release](https://github.com/3ddruck12/Openstair/releases) gehaengt.
+
+**Falls kein Lauf sichtbar:** unter **Einstellungen → Actions → General** muss **Actions** erlaubt sein. Dann `main` mit aktuellem `.github/workflows/release-linux.yml` pushen und Release erneut anlegen bzw. Workflow manuell starten.
 
 Lokal (Ubuntu, `sudo` fuer `dpkg-deb`):
 
