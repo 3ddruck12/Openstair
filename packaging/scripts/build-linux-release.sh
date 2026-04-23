@@ -130,11 +130,11 @@ X-AppImage-Version=$VERSION
 EOF
 cp -a "$APPDIR/openstair.desktop" "$APPDIR/usr/share/applications/openstair.desktop"
 
-# appimagetool (ohne FUSE auf CI: --appimage-extract-and-run oder download portable)
+# appimagetool (ohne FUSE auf CI: per Extract-and-Run-Modus)
 APITOOL="$ROOT/packaging/_appimagetool.AppImage"
 wget -q -O "$APITOOL" "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
 chmod +x "$APITOOL"
-export APPIMAGETOOL_EXTRACT_AND_RUN=1
+export APPIMAGE_EXTRACT_AND_RUN=1
 ARCH=x86_64 VERSION="$VERSION" \
   "$APITOOL" --no-appstream \
   "$APPDIR" "packaging/_artifacts/OpenStair-${VERSION}-x86_64.AppImage"
