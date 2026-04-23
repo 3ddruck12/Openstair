@@ -52,7 +52,7 @@ pytest
 
 Auf **GitHub Actions** (Workflow **Release (Linux)**) startet bei:
 
-- **Push eines Git-Tags** `v*` (`git push origin v0.5.0`), oder
+- **Push eines Git-Tags** `v*` (`git push origin v0.5.1`), oder
 - **Veroeffentlichtem Release** ([Release-Seite](https://github.com/3ddruck12/Openstair/releases) – „Publish release“ loest `release: published` aus), oder
 - manuell: **Actions → Release (Linux) → Run workflow**
 
