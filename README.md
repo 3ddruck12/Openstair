@@ -1,4 +1,4 @@
-# OpenStair (Python + PySide6)
+# OpenStair
 
 **Repository:** [github.com/3ddruck12/Openstair](https://github.com/3ddruck12/Openstair)
 
