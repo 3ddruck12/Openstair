@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=OpenStair
+GenericName=Stahltreppen Vorplanung
+Comment=Treppenbemessung und DXF/PDF-Export (Vorplanung)
+Categories=Engineering;Science;
+Terminal=false
+StartupNotify=true
+# Pfad anpassen: z. B. /home/…/Openstair/run.sh (Leerzeichen in Pfad in Anfuehrungszeichen)
+Exec=env OPENSTAIR_SKIP_QT_DEPS_CHECK=0 "/PFAD_ZUM_PROJEKT_OPENSTAIR/run.sh" %F
+Icon=openstair
+Path=
+MimeType=

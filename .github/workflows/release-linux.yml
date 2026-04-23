@@ -1,0 +1,63 @@
+# Release-Artefakte: .deb (amd64) + AppImage (x86_64) via PyInstaller onedir.
+# Auslösung: Git-Tag v* oder manuell workflow_dispatch.
+
+name: Release (Linux)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versionsnummer ohne v (leer = aus pyproject.toml); bei Tag-Build ignoriert"
+        required: false
+        default: ""
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-linux-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Build .deb and AppImage
+        env:
+          # Nur bei workflow_dispatch: manuell; bei Tag-Build leer -> Skript nutzt GITHUB_REF_NAME
+          OPENSTAIR_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.version || '' }}
+        run: |
+          chmod +x packaging/scripts/build-linux-release.sh
+          packaging/scripts/build-linux-release.sh
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: openstair-linux-${{ github.ref_name || github.run_id }}
+          path: |
+            packaging/_artifacts/*.deb
+            packaging/_artifacts/*.AppImage
+          if-no-files-found: error
+
+      - name: Create GitHub Release (nur bei Tag v*)
+        if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            packaging/_artifacts/*.deb
+            packaging/_artifacts/*.AppImage
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

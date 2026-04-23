@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "source": "MEISER Gitterrost-Treppenstufen, Katalogdaten fuer Vorplanung.",
+  "tread_types": [
+    {
+      "name": "MEISER SP 30/3 33x33 R11",
+      "kg_per_m2": 33.0,
+      "mesh": "33x33",
+      "bearing_bar": "30x3",
+      "slip_rating": "R11",
+      "ref_live_load_kN_m2": 5.0,
+      "max_span_mm_ref_load": 1200.0
+    },
+    {
+      "name": "MEISER SP 30/3 30x30 R12",
+      "kg_per_m2": 36.0,
+      "mesh": "30x30",
+      "bearing_bar": "30x3",
+      "slip_rating": "R12",
+      "ref_live_load_kN_m2": 5.0,
+      "max_span_mm_ref_load": 1250.0
+    },
+    {
+      "name": "MEISER SP 40/2 33x33 R11",
+      "kg_per_m2": 29.0,
+      "mesh": "33x33",
+      "bearing_bar": "40x2",
+      "slip_rating": "R11",
+      "ref_live_load_kN_m2": 5.0,
+      "max_span_mm_ref_load": 1000.0
+    },
+    {
+      "name": "MEISER SP 40/3 33x33 R12",
+      "kg_per_m2": 38.0,
+      "mesh": "33x33",
+      "bearing_bar": "40x3",
+      "slip_rating": "R12",
+      "ref_live_load_kN_m2": 5.0,
+      "max_span_mm_ref_load": 1450.0
+    }
+  ]
+}

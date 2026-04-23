@@ -1,0 +1,139 @@
+{
+  "schema_version": "1.1",
+  "library_version": "2026.04",
+  "source": "Kompakte Referenzwerte fuer Vorplanung (projektinterne Tabelle, an Hersteller-/Normtabellen anzupassen). a_v_cm2 = Schubflaeche nach EC3 §6.2.6.",
+  "profiles": [
+    {
+      "name": "UPN120",
+      "series": "UPN",
+      "kg_per_m": 13.4,
+      "w_el_cm3": 65.0,
+      "i_cm4": 390.0,
+      "height_mm": 120.0,
+      "width_mm": 55.0,
+      "thickness_mm": 7.0,
+      "a_v_cm2": 8.4
+    },
+    {
+      "name": "UPN140",
+      "series": "UPN",
+      "kg_per_m": 16.0,
+      "w_el_cm3": 94.0,
+      "i_cm4": 660.0,
+      "height_mm": 140.0,
+      "width_mm": 60.0,
+      "thickness_mm": 7.5,
+      "a_v_cm2": 10.5
+    },
+    {
+      "name": "UPN160",
+      "series": "UPN",
+      "kg_per_m": 18.8,
+      "w_el_cm3": 128.0,
+      "i_cm4": 1030.0,
+      "height_mm": 160.0,
+      "width_mm": 65.0,
+      "thickness_mm": 8.0,
+      "a_v_cm2": 12.8
+    },
+    {
+      "name": "UPN180",
+      "series": "UPN",
+      "kg_per_m": 22.0,
+      "w_el_cm3": 169.0,
+      "i_cm4": 1530.0,
+      "height_mm": 180.0,
+      "width_mm": 70.0,
+      "thickness_mm": 8.5,
+      "a_v_cm2": 15.3
+    },
+    {
+      "name": "UPE160",
+      "series": "UPE",
+      "kg_per_m": 19.2,
+      "w_el_cm3": 140.0,
+      "i_cm4": 1120.0,
+      "height_mm": 160.0,
+      "width_mm": 64.0,
+      "thickness_mm": 7.5,
+      "a_v_cm2": 12.0
+    },
+    {
+      "name": "HEA120",
+      "series": "HEA",
+      "kg_per_m": 19.9,
+      "w_el_cm3": 106.0,
+      "i_cm4": 636.0,
+      "height_mm": 114.0,
+      "width_mm": 120.0,
+      "thickness_mm": 8.0,
+      "a_v_cm2": 8.6
+    },
+    {
+      "name": "HEA140",
+      "series": "HEA",
+      "kg_per_m": 24.7,
+      "w_el_cm3": 145.0,
+      "i_cm4": 1010.0,
+      "height_mm": 133.0,
+      "width_mm": 140.0,
+      "thickness_mm": 8.5,
+      "a_v_cm2": 11.0
+    },
+    {
+      "name": "HEA160",
+      "series": "HEA",
+      "kg_per_m": 30.4,
+      "w_el_cm3": 193.0,
+      "i_cm4": 1540.0,
+      "height_mm": 152.0,
+      "width_mm": 160.0,
+      "thickness_mm": 9.0,
+      "a_v_cm2": 13.6
+    },
+    {
+      "name": "HEB160",
+      "series": "HEB",
+      "kg_per_m": 42.6,
+      "w_el_cm3": 332.0,
+      "i_cm4": 2660.0,
+      "height_mm": 160.0,
+      "width_mm": 160.0,
+      "thickness_mm": 13.0,
+      "a_v_cm2": 17.6
+    },
+    {
+      "name": "RHS120x60x4",
+      "series": "RHS",
+      "kg_per_m": 11.2,
+      "w_el_cm3": 44.0,
+      "i_cm4": 262.0,
+      "height_mm": 120.0,
+      "width_mm": 60.0,
+      "thickness_mm": 4.0,
+      "a_v_cm2": 9.6
+    },
+    {
+      "name": "RHS140x80x5",
+      "series": "RHS",
+      "kg_per_m": 16.2,
+      "w_el_cm3": 83.0,
+      "i_cm4": 580.0,
+      "height_mm": 140.0,
+      "width_mm": 80.0,
+      "thickness_mm": 5.0,
+      "a_v_cm2": 14.0
+    },
+    {
+      "name": "SHS120x120x5",
+      "series": "SHS",
+      "kg_per_m": 17.9,
+      "w_el_cm3": 95.0,
+      "i_cm4": 570.0,
+      "height_mm": 120.0,
+      "width_mm": 120.0,
+      "thickness_mm": 5.0,
+      "a_v_cm2": 12.0
+    }
+  ]
+}
