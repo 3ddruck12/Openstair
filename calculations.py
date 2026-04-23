@@ -7,14 +7,13 @@ import logging
 from math import sqrt
 from pathlib import Path
 
-from enums import StairDirection, StairOrientation, StairType, SupportLayout
-from norms import BEARING_LIBRARY, MATERIAL_LIBRARY, NORM_CONFIG_DE
-from profile_library import get_profile, get_profile_names
-
 from core.checks import _check_connections, _check_phase0_gate, _check_sls, _check_uls
 from core.geometry import _check_geometry, _compute_geometry, _compute_masses
 from core.loads import _compute_loads
 from core.models import BomItem, StairInput, StairResult
+from enums import StairDirection, StairOrientation, StairType, SupportLayout
+from norms import BEARING_LIBRARY, MATERIAL_LIBRARY, NORM_CONFIG_DE
+from profile_library import get_profile, get_profile_names
 
 log = logging.getLogger(__name__)
 
@@ -94,7 +93,7 @@ def get_profile_data(profile_name: str) -> dict[str, float]:
 
 
 def get_available_tread_types() -> list[str]:
-    return sorted(_load_tread_types().keys()) + [CUSTOM_TREAD_TYPE]
+    return [*sorted(_load_tread_types().keys()), CUSTOM_TREAD_TYPE]
 
 
 def get_tread_type_kg_per_m2(tread_type_name: str) -> float | None:

@@ -5,10 +5,9 @@ from __future__ import annotations
 import logging
 from math import atan, ceil, degrees, sqrt
 
+from core.models import StairInput
 from enums import HandrailSide, StairType, SupportLayout
 from norms import NORM_CONFIG_DE
-
-from core.models import StairInput
 
 log = logging.getLogger(__name__)
 
@@ -100,7 +99,7 @@ def _compute_masses(
     elif data.support_layout == SupportLayout.ENDS_ONLY:
         auto_support_count = 2
     else:
-        auto_support_count = max(2, int(ceil((walking_line / 1000.0) / 1.5)))
+        auto_support_count = max(2, ceil((walking_line / 1000.0) / 1.5))
 
     support_count = data.support_count if data.support_count > 0 else auto_support_count
     approx_supports_kg = float(support_count) * data.support_unit_weight_kg if data.supports_enabled else 0.0

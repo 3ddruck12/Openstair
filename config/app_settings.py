@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import os
+from contextlib import suppress
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -32,10 +33,8 @@ class AppSettings:
                 continue
             val = d[key]
             if key == "version":
-                try:
+                with suppress(TypeError, ValueError):
                     base[key] = int(val)
-                except (TypeError, ValueError):
-                    pass
             elif key == "log_level":
                 s = str(val).upper().strip()
                 if s in ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"):

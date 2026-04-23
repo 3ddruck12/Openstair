@@ -1,10 +1,19 @@
 """Tests fuer Enums, Normkonfiguration und Tread-Type JSON."""
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from calculations import (
+    get_available_bearing_conditions,
+    get_available_stair_types,
+    get_available_steel_grades,
+    get_available_tread_types,
+    get_tread_type_data,
+    get_tread_type_description,
+    get_tread_type_kg_per_m2,
+)
 from enums import (
     BearingCondition,
     HandrailSide,
@@ -16,15 +25,6 @@ from enums import (
     __version__,
 )
 from norms import BEARING_LIBRARY, MATERIAL_LIBRARY, NORM_CONFIG_DE
-from calculations import (
-    get_available_bearing_conditions,
-    get_available_stair_types,
-    get_available_steel_grades,
-    get_available_tread_types,
-    get_tread_type_data,
-    get_tread_type_description,
-    get_tread_type_kg_per_m2,
-)
 
 
 def test_version_is_set() -> None:

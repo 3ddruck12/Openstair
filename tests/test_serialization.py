@@ -1,13 +1,12 @@
 """Tests fuer Projektdatei-Serialisierung und DXF-Settings."""
 
-from pathlib import Path
-import json
 import sys
 import tempfile
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from dxf_settings import DxfExportSettings, save_dxf_settings, load_dxf_settings
+from dxf_settings import DxfExportSettings, load_dxf_settings, save_dxf_settings
 
 
 def test_dxf_settings_roundtrip() -> None:

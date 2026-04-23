@@ -1,12 +1,12 @@
 """Tests fuer DXF, PDF und BOM Export (Regressionstests)."""
 
-from pathlib import Path
 import sys
 import tempfile
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from calculations import StairInput, StairResult, calculate_stair, build_bom
+from calculations import StairInput, build_bom, calculate_stair
 from dxf_export import export_stair_side_view_dxf
 from dxf_settings import DxfExportSettings
 from report_export import export_bom_csv, export_report_pdf

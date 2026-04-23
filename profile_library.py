@@ -3,7 +3,6 @@ import json
 from functools import lru_cache
 from pathlib import Path
 
-
 PROFILE_JSON_FILE = Path(__file__).resolve().parent / "data" / "profiles_library.json"
 PROFILE_CSV_FILE = Path(__file__).resolve().parent / "data" / "profiles_library.csv"
 REQUIRED_KEYS = {
@@ -23,7 +22,7 @@ SUPPORTED_SERIES = {"UPN", "UPE", "HEA", "HEB", "RHS", "SHS"}
 def _as_positive_float(value: object, field: str, profile_name: str) -> float:
     try:
         out = float(value)
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         raise ValueError(f"Profil {profile_name}: Feld {field} ist keine Zahl.") from exc
     if out <= 0:
         raise ValueError(f"Profil {profile_name}: Feld {field} muss > 0 sein.")

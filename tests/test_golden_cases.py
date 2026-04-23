@@ -1,11 +1,11 @@
 """Golden Cases: Referenzwerte fuer den Rechenkern (Regressionsschutz)."""
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from calculations import StairInput, StairResult, calculate_stair, build_bom
+from calculations import StairInput, build_bom, calculate_stair
 from enums import BearingCondition, StairType
 
 

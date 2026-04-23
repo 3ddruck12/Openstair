@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QCheckBox,
     QDialog,
@@ -24,7 +23,7 @@ class DxfSettingsDialog(QDialog):
         self, parent: QWidget | None = None, initial: DxfExportSettings | None = None
     ) -> None:
         super().__init__(parent)
-        self.setWindowTitle("DXF-Export – Einstellungen")
+        self.setWindowTitle("DXF-Export - Einstellungen")
         self.setMinimumWidth(460)
         base = initial if initial is not None else load_dxf_settings()
         self._s = DxfExportSettings.from_dict(base.to_dict())

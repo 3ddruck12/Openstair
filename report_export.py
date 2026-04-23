@@ -56,7 +56,7 @@ def export_report_pdf(
     bom_items: list[BomItem],
 ) -> None:
     c = canvas.Canvas(str(path), pagesize=A4)
-    width, height = A4
+    _width, height = A4
     y = height - MARGIN_TOP
     current_font_name = "Helvetica"
     current_font_size = 10

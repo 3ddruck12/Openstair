@@ -1,10 +1,8 @@
+import json
 import logging
 import os
-import json
 import sys
 from pathlib import Path
-
-from config.logging_bootstrap import setup_logging
 
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QAction, QIcon
@@ -24,14 +22,12 @@ from PySide6.QtWidgets import (
     QPushButton,
     QScrollArea,
     QSizePolicy,
+    QStatusBar,
     QTabWidget,
     QToolButton,
     QVBoxLayout,
-    QStatusBar,
     QWidget,
 )
-
-from enums import __version__, StairType, HandrailSide, SupportLayout, Regulation
 
 from calculations import (
     StairInput,
@@ -49,11 +45,13 @@ from calculations import (
     get_tread_type_description,
     get_tread_type_kg_per_m2,
 )
+from config.logging_bootstrap import setup_logging
 from dxf_export import export_stair_side_view_dxf
 from dxf_settings import DxfExportSettings, load_dxf_settings
-from ui.dxf_settings_dialog import DxfSettingsDialog
-from norms import NORM_CONFIG_DE, MATERIAL_LIBRARY
+from enums import StairType, __version__
+from norms import NORM_CONFIG_DE
 from report_export import append_release_changelog, export_bom_csv, export_report_pdf
+from ui.dxf_settings_dialog import DxfSettingsDialog
 from ui.stair_preview import StairSidePreview
 
 logger = logging.getLogger("openstair")
@@ -113,7 +111,7 @@ PARAM_HELP: dict[str, str] = {
     "fy": "Bemessungswert der Streckgrenze (Charakterwert) [MPa] falls von Standard abweichend, "
     "0 = aus Materialtabelle.",
     "national_annex": "Kennung des Nationalen Anhangs (z. B. „NA Deutschland“) im Bericht und fuer Parameter.",
-    "regulation": "Zusaetzliche Anforderungen (Arbeitsstaette, Sonderbau) – wirkt in Normhinweisen.",
+    "regulation": "Zusaetzliche Anforderungen (Arbeitsstaette, Sonderbau) - wirkt in Normhinweisen.",
     "headroom": "Geforderte lichte Hoehe unter der Decke bzw. freie Durchgangshoehe [mm] (Kopffreiheits-Check).",
     "landing": "Mindestlaenge (Einlauf) des Podests bei Podesttreppe [mm], 0 = Vorgabe mindestens Breite.",
     "landing_width": "Podestbreite quer zur Laufachse [mm], 0 = gleich Treppenbreite.",
@@ -121,9 +119,9 @@ PARAM_HELP: dict[str, str] = {
     "axial": "Zusaetzliche Normalkraft in der Wange [kN] fuer Biegung/Normalkraft-Interaktion, 0 = keine.",
     "tread_info": "Kurzbeschreibung des gewaehlten Stufentyps (nur Lese-Info).",
     "handrail_enabled": "Wenn aktiv: Laenge und Masse des Handlaufs werden aus der Lauflinie und kg/m geschaetzt.",
-    "handrail_sides": "Handlauf links, rechts oder beidseitig – Faktor auf Gesamtlaenge und Masse.",
+    "handrail_sides": "Handlauf links, rechts oder beidseitig - Faktor auf Gesamtlaenge und Masse.",
     "handrail_kg": "Gewicht des Handlaufprofils pro Meter [kg/m] (Rohr oder Vierkant, je nach Ausfuehrung).",
-    "handrail_height": "Bezugshoehe des Handlaufs ueber Auftritt [mm] (ueblicherweise 900–1000, "
+    "handrail_height": "Bezugshoehe des Handlaufs ueber Auftritt [mm] (ueblicherweise 900-1000, "
     "Planung/Statik getrennt).",
     "supports_enabled": "Wenn aktiv: Stuetzenanzahl und Masse in Gesamtmenge und Stueckliste; "
     "Position nur vereinfacht.",
@@ -140,7 +138,7 @@ PARAM_HELP: dict[str, str] = {
     "input_detail_view": "Mehr technische Zeilen in der Textausgabe (Schnelluebersicht bleibt kompakt).",
     "status_ampel": "Kurzstatus: rot/gelb/gruen nach Eingabefehlern, Gate und Nachweisen.",
     "result_label": "Ergebnis der Berechnung: Kennwerte, Ausnutzungen, Hinweise. Text markier- und scrollbar.",
-    "stair_preview": "Vorschau: Seite, Grundriss, 3D – nach „Berechnen“ bzw. F5 (Menue Ansicht) aktuell.",
+    "stair_preview": "Vorschau: Seite, Grundriss, 3D - nach „Berechnen“ bzw. F5 (Menue Ansicht) aktuell.",
     "btn_calc": "Eingabe pruefen und Treppe bemessen (ULS, SLS, Anschluesse, Geometrie).",
     "btn_dxf": "2D-DXF (Seite + optional Grundriss) mit aktuellen DXF-Einstellungen speichern.",
     "btn_bom": "Stueckliste als CSV-Datei exportieren.",
@@ -167,9 +165,10 @@ def _preflight_gui_linux() -> None:
             file=sys.stderr,
         )
         sys.exit(1)
-    if os.environ.get("WAYLAND_DISPLAY") and not os.environ.get("DISPLAY"):
-        if (os.environ.get("QT_QPA_PLATFORM") or "").lower().startswith("wayland"):
-            return
+    if os.environ.get("WAYLAND_DISPLAY") and not os.environ.get("DISPLAY") and (
+        os.environ.get("QT_QPA_PLATFORM") or ""
+    ).lower().startswith("wayland"):
+        return
     if _cdll_load("libxcb-cursor.so.0") or _cdll_load("libxcb-cursor.so"):
         return
     if os.environ.get("WAYLAND_DISPLAY") and not os.environ.get("DISPLAY"):
@@ -232,7 +231,7 @@ class MainWindow(QMainWindow):
         self.input_plate = QLineEdit("39.25")
         self.input_live_category = QComboBox()
         self.input_live_category.addItems(
-            list(NORM_CONFIG_DE["live_load_categories_kN_m2"].keys()) + ["Benutzerdefiniert"]
+            [*NORM_CONFIG_DE["live_load_categories_kN_m2"].keys(), "Benutzerdefiniert"]
         )
         self.input_live_category.setCurrentText("C1_Versammlungsflaeche_leicht")
         self.input_live_load = QLineEdit("3.0")
@@ -762,7 +761,7 @@ class MainWindow(QMainWindow):
         QMessageBox.about(
             self,
             "Ueber OpenStair",
-            f"OpenStair v{__version__} – Stahltreppe Vorplanung\n\n"
+            f"OpenStair v{__version__} - Stahltreppe Vorplanung\n\n"
             "Python, PySide6, DXF/PDF-Export.\n"
             "Vorbemessung; kein Ersatz fuer die Fachpruefung.",
         )
@@ -1335,7 +1334,7 @@ class MainWindow(QMainWindow):
         except ValueError as exc:
             QMessageBox.warning(self, "Eingabefehler", str(exc))
             self._update_ampel(errors_count=1, has_result=False)
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             logging.exception("Berechnung fehlgeschlagen")
             QMessageBox.critical(self, "Fehler", f"Berechnung fehlgeschlagen:\n{exc}")
             self._update_ampel(errors_count=1, has_result=False)
@@ -1364,7 +1363,7 @@ class MainWindow(QMainWindow):
                 file_path, self.last_input, self.last_result, self.dxf_settings
             )
             QMessageBox.information(self, "Export", f"DXF gespeichert:\n{file_path}")
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             logging.exception("DXF Export fehlgeschlagen")
             QMessageBox.critical(self, "Fehler", f"DXF Export fehlgeschlagen:\n{exc}")
 
@@ -1391,7 +1390,7 @@ class MainWindow(QMainWindow):
             bom_items = build_bom(self.last_input, self.last_result)
             export_bom_csv(file_path, bom_items)
             QMessageBox.information(self, "Export", f"BOM gespeichert:\n{file_path}")
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             logging.exception("BOM Export fehlgeschlagen")
             QMessageBox.critical(self, "Fehler", f"BOM Export fehlgeschlagen:\n{exc}")
 
@@ -1420,7 +1419,7 @@ class MainWindow(QMainWindow):
             changelog_path = Path(file_path).parent / "CHANGELOG.md"
             append_release_changelog(changelog_path, self.last_input, self.last_result)
             QMessageBox.information(self, "Export", f"PDF gespeichert:\n{file_path}")
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             logging.exception("PDF Export fehlgeschlagen")
             QMessageBox.critical(self, "Fehler", f"PDF Export fehlgeschlagen:\n{exc}")
 

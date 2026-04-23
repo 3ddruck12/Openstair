@@ -47,8 +47,8 @@ jobs:
           cache: pip
 
       - name: Set OPENSTAIR_VERSION (nur manueller Lauf)
-        if: github.event_name == 'workflow_dispatch' && inputs.version != ''
-        run: echo "OPENSTAIR_VERSION=${{ inputs.version }}" >> "$GITHUB_ENV"
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.version != ''
+        run: echo "OPENSTAIR_VERSION=${{ github.event.inputs.version }}" >> "$GITHUB_ENV"
 
       - name: Build .deb and AppImage
         run: |

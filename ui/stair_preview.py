@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import math
 
-from PySide6.QtCore import QPointF, Qt, QRectF
+from PySide6.QtCore import QPointF, Qt
 from PySide6.QtGui import (
     QColor,
     QFont,
@@ -27,7 +27,6 @@ from PySide6.QtWidgets import (
 )
 
 from calculations import StairInput, StairResult
-from enums import StairDirection, StairType
 
 BG = QColor(42, 45, 52)
 PLAN_LANDING = QColor(100, 140, 180, 120)
@@ -39,7 +38,7 @@ GAP_PLAN = 250.0
 
 def _plan_x_mirror_uleft(x_left: float, width: float, span: float) -> float:
     """
-    Rechte Kante (span) abwickeln: linkes Drittel/Teil erscheint links – ueblich bei
+    Rechte Kante (span) abwickeln: linkes Drittel/Teil erscheint links - ueblich bei
     Mittel-Podest-Grundrissen (Wende links, beide Laeufe parallel rechts).
     """
     return span - x_left - width
@@ -75,7 +74,7 @@ def _l_quarter_geometry(
     u = turn_x + r2_leg
     if u < 1e-6 or tread_count < 1:
         return turn_x, r2_leg, 1, max(0, tread_count - 1)
-    n1 = int(round(tread_count * (turn_x / u)))
+    n1 = round(tread_count * (turn_x / u))
     n1 = max(1, min(tread_count, n1))
     n2 = tread_count - n1
     if n2 < 1 and tread_count > 1:
@@ -538,7 +537,7 @@ def _path_centerline_3d(data: StairInput, result: StairResult) -> list[tuple[flo
     elif st == "Gerade Treppe":
         x, y, z = 0.0, 0.0, z0
         out.append((x, y, z))
-        for i in range(result.tread_count):
+        for _ in range(result.tread_count):
             y += rise
             out.append((x, y, z))
             x += going
@@ -570,7 +569,7 @@ def _path_centerline_3d(data: StairInput, result: StairResult) -> list[tuple[flo
         hlen = max(run1 / 2.0, b)
         x, y, z = 0.0, 0.0, z0
         n1 = max(1, result.tread_count // 2)
-        for i in range(n1):
+        for _ in range(n1):
             y += rise
             out.append((x, y, z))
             x += min(going, hlen / n1) if n1 else going
@@ -580,7 +579,7 @@ def _path_centerline_3d(data: StairInput, result: StairResult) -> list[tuple[flo
         out.append((hlen, y, b + GAP_PLAN + z0))
         x = hlen
         z2 = b + GAP_PLAN + z0
-        for j in range(result.tread_count - n1):
+        for _ in range(result.tread_count - n1):
             y += rise
             out.append((x, y, z2))
             x -= min(going, hlen / max(result.tread_count - n1, 1))
@@ -602,7 +601,7 @@ class _SideViewWidget(QWidget):
         self._result = result
         self.update()
 
-    def paintEvent(self, event) -> None:  # noqa: ANN001
+    def paintEvent(self, event) -> None:
         p = QPainter(self)
         p.setRenderHint(QPainter.Antialiasing, True)
         rect = self.rect()
@@ -664,7 +663,7 @@ class _PlanViewWidget(QWidget):
         self._result = result
         self.update()
 
-    def paintEvent(self, event) -> None:  # noqa: ANN001
+    def paintEvent(self, event) -> None:
         p = QPainter(self)
         p.setRenderHint(QPainter.Antialiasing, True)
         rect = self.rect()
@@ -781,7 +780,7 @@ class _PlanViewWidget(QWidget):
             p.setPen(QColor(210, 215, 225))
             p.drawText(
                 to_plan(4, y0 + 4),
-                "Mittel-Podest (U), Draufsicht – parallele Laeufe, Wende links",
+                "Mittel-Podest (U), Draufsicht - parallele Laeufe, Wende links",
             )
             _plan_arrow_along(
                 p, to_plan, f1l, y0 + B * 0.5, run1, 0, 0.4, max(350, run1 * 0.1)
@@ -818,7 +817,7 @@ class _PlanViewWidget(QWidget):
             )
             p.drawText(
                 to_plan(4, y0 + 4),
-                "L-Treppe (90°) – Grundriss analog DXF-Export (erster Lauf 0,55×Run)",
+                "L-Treppe (90°) - Grundriss analog DXF-Export (erster Lauf 0,55xRun)",
             )
         else:
             half = max(run1 / 2.0, B)
@@ -851,7 +850,7 @@ class _Iso3DWidget(QWidget):
         self._result = result
         self.update()
 
-    def paintEvent(self, event) -> None:  # noqa: ANN001
+    def paintEvent(self, event) -> None:
         p = QPainter(self)
         p.setRenderHint(QPainter.Antialiasing, True)
         rect = self.rect()
@@ -868,7 +867,8 @@ class _Iso3DWidget(QWidget):
         b = data.stair_width_mm
         fh = data.floor_height_mm
         run = tr.run_mm
-        extra = list(path3) + [
+        extra = [
+            *path3,
             (0, 0, 0),
             (run, 0, 0),
             (0, fh, 0),
@@ -942,10 +942,11 @@ class _Iso3DWidget(QWidget):
                     continue
                 ox = -dz / dhx * hw
                 oz = dx / dhx * hw
-                if is_flat or abs(dy) < 0.1:
-                    top = QColor(95, 110, 135, 200)
-                else:
-                    top = QColor(150, 105, 75, 205)
+                top = (
+                    QColor(95, 110, 135, 200)
+                    if is_flat or abs(dy) < 0.1
+                    else QColor(150, 105, 75, 205)
+                )
                 ed = top.darker(150)
                 poly = QPolygonF(
                     [
@@ -981,7 +982,7 @@ class _Iso3DWidget(QWidget):
         p.setPen(QColor(160, 170, 180))
         if tr.stair_type == "Podesttreppe":
             cap = (
-                "3D: U-Mittelpodest, Isometrie (30°) – Stufen, Podest, Wangen, Stuetzen, "
+                "3D: U-Mittelpodest, Isometrie (30°) - Stufen, Podest, Wangen, Stuetzen, "
                 "Handlauf (Vorschau, kein OpenGL)."
             )
         else:
@@ -991,7 +992,7 @@ class _Iso3DWidget(QWidget):
         if tr.stair_type == "Podesttreppe":
             foot = f"{tr.stair_type} | Vorschau analog Werkstattzeichnung"
         else:
-            foot = f"{tr.stair_type} | Band = ca. 0,85× Laufbreite"
+            foot = f"{tr.stair_type} | Band = ca. 0,85x Laufbreite"
         p.drawText(rect.adjusted(6, 6, -6, -6), Qt.AlignBottom | Qt.AlignRight, foot)
 
 

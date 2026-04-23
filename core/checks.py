@@ -5,9 +5,8 @@ from __future__ import annotations
 import logging
 from math import pi, sqrt
 
-from norms import NORM_CONFIG_DE
-
 from core.models import StairInput
+from norms import NORM_CONFIG_DE
 
 log = logging.getLogger(__name__)
 
@@ -46,7 +45,7 @@ def _check_uls(
         a_v_mm2 = float(profile["a_v_cm2"]) * 100.0
     else:
         a_v_mm2 = max(w_el_mm3 / 100.0, 1.0)
-        log.warning("Profil ohne a_v_cm2 – Naeherung W_el/100 verwendet")
+        log.warning("Profil ohne a_v_cm2 - Naeherung W_el/100 verwendet")
     tau_ed = (v_ed * 1000.0) / a_v_mm2
     tau_rd = sigma_rd / sqrt(3.0)
     utilization_shear = tau_ed / max(tau_rd, 1e-9)

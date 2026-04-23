@@ -4,9 +4,8 @@ from __future__ import annotations
 
 import logging
 
-from norms import NORM_CONFIG_DE
-
 from core.models import StairInput
+from norms import NORM_CONFIG_DE
 
 log = logging.getLogger(__name__)
 
