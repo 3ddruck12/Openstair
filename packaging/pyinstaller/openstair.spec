@@ -8,8 +8,10 @@ try:
 except ImportError:
     collect_all = None  # type: ignore[misc,assignment]
 
-# Repo-Root: packaging/pyinstaller -> ..
-_repo = Path(__file__).resolve().parents[2]
+# Repo-Root robust bestimmen. In manchen CI/PyInstaller-Kontexten ist __file__
+# in Spec-Ausfuehrung nicht gesetzt.
+_spec_file = globals().get("__file__")
+_repo = Path(_spec_file).resolve().parents[2] if _spec_file else Path.cwd().resolve()
 
 _datas: list = [
     (str(_repo / "data"), "data"),
@@ -40,7 +42,7 @@ if collect_all is not None:
         _datas += d_extra
         _bin += b_extra
         _hid += list(hi_extra)
-    except Exception:  # noqa: BLE001
+    except Exception:
         pass
 
 a = Analysis(
